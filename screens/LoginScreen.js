@@ -83,8 +83,8 @@ const LoginScreen = () => {
         >
           <Text style={styles.buttonOutlineText}>Register</Text>
         </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+       </View>
+     </KeyboardAvoidingView> 
   )
 }
 
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   inputContainer: {
-    width: '80%'
+    width: '80%',
   },
   input: {
     backgroundColor: 'white',
