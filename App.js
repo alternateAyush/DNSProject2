@@ -7,8 +7,8 @@ import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import ApodScreen from './screens/ApodScreen';
 import MarsRover from './screens/MarsRover';
-import { TouchableOpacity } from 'react-native-web';
-
+import Asteroids from './screens/Asteroids';
+import Page from './screens/Page';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -39,6 +39,28 @@ export default function App() {
         }}  />
         <Stack.Screen name="MarsRover" component={MarsRover}  options={{
           headerTitle:'Mars Rover Images',
+          headerShown:true,
+          headerStyle: {
+            backgroundColor: '#000C15',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}  />
+        <Stack.Screen name="Asteroids" component={Asteroids}  options={{
+          headerTitle:'Asteroids',
+          headerShown:true,
+          headerStyle: {
+            backgroundColor: '#000C15',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}  />
+        <Stack.Screen name="Page" component={Page}  options={{
+          headerTitle:'Page',
           headerShown:true,
           headerStyle: {
             backgroundColor: '#000C15',

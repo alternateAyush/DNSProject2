@@ -1,46 +1,43 @@
 import React, { useEffect, useState} from 'react';
-import { ActivityIndicator,KeyboardAvoidingView,Card,TextInput,Keyboard,TouchableOpacity, FlatList, Text,ScrollView, View,Image,StyleSheet,SafeAreaView } from 'react-native';
-import background from '../assets/images/marsBackground.jpg'
+import { ActivityIndicator,KeyboardAvoidingView,ImageBackground,TextInput,Keyboard,TouchableOpacity, FlatList, Text,ScrollView, View,Image,StyleSheet,SafeAreaView } from 'react-native';
+import background from '../assets/images/asteroidBackground.jpg'
 import { color } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 import { useNavigation } from '@react-navigation/core'
 
-const MarsRover = () => {
-  const navigation = useNavigation()
+const Asteroids = () => {
+  const backButton='<'
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [sol,setSol] = useState('1000');
+  const [date,setDate] = useState('2022-04-08');
   const [temp,setTemp]=useState();
-  const backButton = '<'
-
-  const getPhotos = async () => {
+  const navigation = useNavigation()
+  const getAsteroids = async () => {
      try {
-      const response = await fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol='+sol+'&api_key=LkAWeBXJQyQwTxITMnnMENadbS4qdRgrgXwDasEn');
+      const response = await fetch('https://api.nasa.gov/neo/rest/v1/feed?start_date='+date+'&end_date='+date+'&api_key=LkAWeBXJQyQwTxITMnnMENadbS4qdRgrgXwDasEn');
       
       const json = await response.json();
-      setData(json.photos);
+      setData(json.near_earth_objects[date]);
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
     }
   }
-
   const goToHome = () => {
     navigation.replace("Home")
     
   }
 
   useEffect(() => {
-    getPhotos();
+    getAsteroids();
   }, []);
 
   const customCall =  async ()=> {
     Keyboard.dismiss()
-    if(sol!=null)
+    if(date!=null)
     {
-      await getPhotos()
+      await getAsteroids()
     }
-
   }
 
   
@@ -50,29 +47,25 @@ const MarsRover = () => {
   const Tile = (props)=>
   {
     return (
-      <View style={styles.tile}>  
-            
-      <View style={styles.ImageContainer}>
-        <Image source={{uri:props.img_src}} style={styles.roverImage}/>
-      </View> 
-           <View
-  style={{
-    borderBottomColor: 'white',
-    borderBottomWidth: 4,
-    marginHorizontal:50,
-    marginBottom:10,
-  }}
-/> 
-      <View style={{paddingBottom:20,zIndex:-1}}>
-        <Text style={styles.tileText}>Sol: {props.sol}</Text>
-        <Text style={styles.tileText}>Earth Date: {props.earth_date}</Text>
-        <Text style={styles.tileText}>Camera Name: {props.camera.full_name} ({props.camera.name})</Text>
+      <View style={styles.tile}> 
+      <View style={{paddingBottom:10,}}>
+        <Text style={styles.tileText}>Id: {props.id}</Text>
+        <Text style={styles.tileText}>Name: {props.name}</Text>
+        <Text style={styles.tileText}>Estimated Diameter:</Text>
+        <Text style={styles.tileText}>    Min: {props.estimated_diameter.meters.estimated_diameter_min.toFixed(2)} m</Text>
+        <Text style={styles.tileText}>    Max: {props.estimated_diameter.meters.estimated_diameter_max.toFixed(2)} m</Text>
+        <Text style={styles.tileText}>Is potentially hazardeous ?  {props.is_potentially_hazardous_asteroid ? 'True' : 'False'}</Text>
+        <Text style={styles.tileText}>Close Approach (Date & Time): {props.close_approach_data[0].close_approach_date_full}</Text>
+        <Text style={styles.tileText}>Relative Velocity: {props.close_approach_data[0].relative_velocity.kilometers_per_second.substring(0,6)} km/sec</Text>
+        <Text style={styles.tileText}>Miss Distance: {props.close_approach_data[0].miss_distance.kilometers.substring(0,12)} km</Text>
+        <Text style={styles.tileText}>Is a sentry object?  {props.is_sentry_object ? 'True' : 'False'}</Text>
+        {/* <Text style={styles.tileText}>Camera Name: {props.camera.full_name} ({props.camera.name})</Text>
         <Text style={styles.tileText}>Rover Name: {props.rover.name}</Text>
         <Text style={styles.tileText}>Rover Launch Date: {props.rover.launch_date}</Text>
         <Text style={styles.tileText}>Rover Landing Date: {props.rover.landing_date}</Text>
-        <Text style={styles.tileText}>Rover Status: {props.rover.status}</Text>      
+        <Text style={styles.tileText}>Rover Status: {props.rover.status}</Text>       */}
       </View>
-
+ 
       </View>
       
     )
@@ -85,7 +78,6 @@ const MarsRover = () => {
         <KeyboardAvoidingView 
         behavior={Platform.OS==="ios"?'padding':'height'}
         style={styles.writeTaskWrapper}>
-          
           <TouchableOpacity onPress={()=>goToHome()}>
           <View style={styles.backWrapper}>
             <Text style={styles.addText}>
@@ -93,7 +85,7 @@ const MarsRover = () => {
             </Text>
           </View>
         </TouchableOpacity>
-          <TextInput keyboardType='number-pad' placeholder={'Sol: 1000 '} style={styles.input} value={sol} onChangeText={text=>setSol(text)} />
+          <TextInput keyboardType='number-pad' placeholder={'Date: 2022-04-08'} style={styles.input} value={date} onChangeText={text=>setDate(text)} />
           <TouchableOpacity onPress={()=>customCall()}>
           <View style={styles.addWrapper}>
             <Text style={styles.addText}>
@@ -101,12 +93,10 @@ const MarsRover = () => {
             </Text>
           </View>
         </TouchableOpacity>
-        
-        </KeyboardAvoidingView>
-        
+        </KeyboardAvoidingView> 
       {isLoading ? <ActivityIndicator size="large" color="#ffffff"/> : (
         <FlatList
-        style={{paddingTop:70, margin:10,zIndex:0}}
+        style={{paddingTop:70, margin:10}}
           data={data}
           keyExtractor={({ id }, index) => id}
           renderItem={({ item }) => (
@@ -114,18 +104,19 @@ const MarsRover = () => {
           )}
         />
       )}
+
     </SafeAreaView>
   );
 };
 
-export default MarsRover
+export default Asteroids
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent:"center",
     flex: 1,
+    justifyContent:'center',
     backgroundColor: '#000C15',
-
+    paddingBottom:0,
   },
   image: {
     height: '100%', 
@@ -133,38 +124,34 @@ const styles = StyleSheet.create({
     position:'absolute'
   },
   tile:{
-    zIndex:-1,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+
+    borderWidth:2,
+    marginTop:10,
+    borderColor:'white',
+    borderRadius:20,
     flex:1,
     width:'100%',
-    height:680,
-    padding:5,
-    borderWidth:3,
-    borderColor:'white',
-    marginVertical:7,
-    borderRadius:20,
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    height:'100%',
+    paddingHorizontal:10,
+    paddingTop:10,
   },
   ImageContainer:{
-    zIndex:-2,
     flex:1,
     width:'100%',
     height:400,
   },
   tileText:{
-    zIndex:-1,
+    fontWeight:'bold',
     paddingBottom: 5,
     fontSize:18,
-    fontWeight:'bold',
     color:'white',
-    justifyContent:'space-between'
   },
   roverImage:{
-    zIndex:-2,
     flex: 1,
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
-    borderRadius:20,
 },
 taskWrapper:{
   paddingTop:80,
@@ -226,8 +213,5 @@ backWrapper:{
 addText:{
   fontSize:20,
 },
-backText:{
-  fontSize:30,
-  fontWeight:'bold',
-},
+
 });
