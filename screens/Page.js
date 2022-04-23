@@ -80,6 +80,14 @@ const Page = () => {
         <Text style={styles.textStyle}>Avg Temperatur: {temp} K</Text>
         <Text style={styles.textStyle}>Axial Tilt: {tilt} degree</Text>
         <Text style={styles.textStyle}>Escape Velocity: {velocity} m/s</Text>
+        {moons===null? <Text style={styles.textStyle}>Number of moons:-</Text> : (
+                // <View style={{paddingTop:70, margin:10,zIndex:0}}>Tile()</View>
+                <Text style={styles.textStyle}>Number of moons:{moons.length}</Text>
+          )}
+          {moons===null? <Text style={styles.textStyle}>One of the Moon/s: -</Text> : (
+                // <View style={{paddingTop:70, margin:10,zIndex:0}}>Tile()</View>
+                <Text style={styles.textStyle}>One of the Moon/s: {moons[0].moon}</Text>
+          )}
         <Text style={styles.textStyle}>Number of moons:{moons.length}</Text>
         <Text style={styles.textStyle}>One of the Moon/s: {moons[0].moon}</Text>
 
