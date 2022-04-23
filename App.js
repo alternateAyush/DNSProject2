@@ -60,7 +60,7 @@ export default function App() {
           },
         }}  />
         <Stack.Screen name="Page" component={Page}  options={{
-          headerTitle:'Page',
+          headerTitle:'Planet',
           headerShown:true,
           headerStyle: {
             backgroundColor: '#000C15',
